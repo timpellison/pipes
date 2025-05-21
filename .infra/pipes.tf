@@ -16,7 +16,14 @@ resource "aws_pipes_pipe" "dynamo_to_sqs_pipe" {
     filter_criteria {
       filter {
         pattern = jsonencode({
-          eventName = ["MODIFY"]
+          eventName = ["MODIFY"],
+          dynamodb = {
+            NewImage = {
+              publishable = {
+                BOOL = [true]
+              }
+            }
+          }
         })
       }
     }
