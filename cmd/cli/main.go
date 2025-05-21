@@ -44,7 +44,29 @@ func run() {
 			panic(err)
 		}
 
+		go secondHalf(t, dclient)
+
 	}
+}
+
+func secondHalf(t *Transaction, c *dynamodb.Client) {
+	t.SubcategoryName = gofakeit.Color()
+	t.CategoryName = gofakeit.BeerStyle()
+	t.MerchantName = gofakeit.Company()
+	t.Publishable = aws.Bool(true)
+	av, err := attributevalue.MarshalMap(t)
+	if err != nil {
+		panic(err)
+	}
+	_, err = c.PutItem(context.Background(), &dynamodb.PutItemInput{
+		Item:      av,
+		TableName: aws.String("ue1-transaction-store"),
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
 }
 
 type Transaction struct {
@@ -53,4 +75,12 @@ type Transaction struct {
 	PostedDate    time.Time `dynamodbav:"posteddate"`
 	PostedAmount  float64   `dynamodbav:"postedamount"`
 	Description   string    `dynamodbav:"description"`
+	OtherTransactionHalf
+	Publishable *bool `dynamodbav:"publishable"`
+}
+
+type OtherTransactionHalf struct {
+	MerchantName    string `dynamodbav:"merchantname"`
+	CategoryName    string `dynamodbav:"categoryname"`
+	SubcategoryName string `dynamodbav:"subcategoryname"`
 }

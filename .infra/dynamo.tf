@@ -13,5 +13,6 @@ resource "aws_dynamodb_table" "transaction_table" {
   name             = "ue1-transaction-store"
   stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
+
 }
 
