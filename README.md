@@ -2,7 +2,7 @@
 
 Piper is an example AWS solution for moving event records from DynamoDB out through an eventbridge pipe to SQS.
 This creates a queue that a lambda could be triggered from whenever an event record is 
-pushed through the stream.
+pushed through the stream thus enabling retries and redrives.
 
 # Use Cases
 
@@ -13,7 +13,6 @@ to support advanced query is to ship attributes from Dynamo we want to query on 
 This approach gives us the ability to ship all dynamo data to another store entirely or 
 as mentioned above, to augment dynamo queries using Opensearch.
 
-
 ## Publishing events from DynamoDB
 
 In event drive architecture, we may want to think about separating event publishing from our applications.
@@ -21,8 +20,14 @@ One possible approach would be to use event bridge pipes to ship events followin
 
 ## Integration
 
-Another possibility with this approach.  Shipping the data to sqs (or another target) could protect our 
-data store but also make the event available for downstream.
+Another possibility with this approach.  Shipping the data to sqs (or another target) will make the event available for downstream.
+Often, in single-table-design solutions, it's necessary to perform updates as a result of a write to Dynamo.  If the desire
+is to make the secondary update asynchronous, this is the possible glue between the processes.
+
+# Scenario
+DynamoDB table is used to record parts of a transaction.  Multiple updates will occur over the course of assembling
+the transaction and the application defines when a transaction in dynamodb is ready to proceed to the next steps.
+
 
 
 # Usage
