@@ -37,7 +37,7 @@ func run() {
 		}
 		_, err = dclient.PutItem(ctx, &dynamodb.PutItemInput{
 			Item:      av,
-			TableName: aws.String("ue1-transaction-store"),
+			TableName: aws.String("transaction-store"),
 		})
 
 		if err != nil {
@@ -60,7 +60,7 @@ func secondHalf(t *Transaction, c *dynamodb.Client) {
 	}
 	_, err = c.PutItem(context.Background(), &dynamodb.PutItemInput{
 		Item:      av,
-		TableName: aws.String("ue1-transaction-store"),
+		TableName: aws.String("transaction-store"),
 	})
 
 	if err != nil {
