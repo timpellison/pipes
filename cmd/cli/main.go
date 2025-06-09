@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/brianvoe/gofakeit"
+	"sync"
 	"time"
 )
 
@@ -22,6 +23,9 @@ func run() {
 	}
 
 	dclient := dynamodb.NewFromConfig(cfg)
+
+	wg := sync.WaitGroup{}
+
 	for i := 0; i < 100; i++ {
 		t := &Transaction{
 			ID:            gofakeit.UUID(),
@@ -44,12 +48,20 @@ func run() {
 			panic(err)
 		}
 
-		go secondHalf(t, dclient)
+		go secondHalf(t, dclient, &wg)
 
 	}
+
+	wg.Wait()
 }
 
-func secondHalf(t *Transaction, c *dynamodb.Client) {
+func secondHalf(t *Transaction, c *dynamodb.Client, wg *sync.WaitGroup) {
+	wg.Add(1)
+	defer func() {
+		time.Sleep(2 * time.Second)
+		wg.Done()
+	}()
+
 	t.SubcategoryName = gofakeit.Color()
 	t.CategoryName = gofakeit.BeerStyle()
 	t.MerchantName = gofakeit.Company()

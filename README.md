@@ -33,7 +33,7 @@ the transaction and the application defines when a transaction in dynamodb is re
 # Usage
 
 1. Get terraform
-2. Switch to the .infra directory
+2. Switch to the .infra directory and choose single or dual region deployment
 3. Run terraform init
 4. Run terraform apply --auto-approve
 5. Install GO
